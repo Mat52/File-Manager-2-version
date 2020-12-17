@@ -1,0 +1,217 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+#include <math.h>
+#include <conio.h>
+
+/* Funkcja czyszcąca planszę */
+void wyczysc (char places[3][3])
+{
+    int i,j;
+    for (i=0;i<3;i++)
+        for (j=0;j<3;j++)
+            places[i][j]=' ';
+
+}
+
+/* Funkcja rysująca planszę na ekranie */
+void wypisz (char places[3][3])
+{
+    system("cls"); // czyśc ekran. Są szybsze sposoby czyszczenia, ale ten jest w miare uniwersalny
+
+    printf("[%c][%c][%c]\n",places[0][0], places[0][1], places[0][2]);
+    //printf("\n");
+    printf("[%c][%c][%c]\n",places[1][0], places[1][1], places[1][2]);
+   //printf("\n");
+    printf("[%c][%c][%c]\n",places[2][0], places[2][1], places[2][2]);
+}
+
+int pelna(char places[3][3])
+{
+int i, j;
+    for (i=0;i<3;i++)
+        for (j=0;j<3;j++)
+            if (places[i][j] == ' ')
+                return 0;
+    return 1;
+
+}
+/*Funkcja ruch_gracza wykona nastepujace czynnosci:
+wyswietli plansze,
+wczyta ruch gracza,
+jezeli gracza wybierze niepoprawne współrzedne pola
+lub współrzedne zajetego pola,
+funkcja wczyta nowy ruch gracza.*/
+void ruch_gracza(char places[3][3])
+{
+    unsigned int i=3, j;
+    wypisz(places);
+    printf("Podaj wiersz i kolumne w ktorej chcesz wstawic krzyzyk\n");
+    while ((i>2)||(j>2) || (places[i][j]!=' '))
+        scanf("%u %u", &i, &j);
+    places[i][j]='x';
+}
+/*Funkcja sprawdz sprawdzi:
+czy na planszy nie ma trzech takich samych znaków lezacych
+w jednej linii (wtedy którys z graczy wygrał),
+czy places jest juz pełna (wtedy jest remis)*/
+char sprawdz(char places[3][3])
+{
+int i;
+for (i=0;i<3;i++)
+{
+    if ( (places[i][0]!=' ')
+        && (places[i][0]==places[i][1])
+        && (places[i][0]==places[i][2]))
+        return places[i][0];
+    if ( (places[0][i]!=' ')
+        &&(places[0][i]==places[1][i])
+        &&(places[0][i]==places[2][i]) )
+return places [0][i];
+
+} // for
+
+if ((places[0][0]!=' ')
+    && (places[0][0]==places[1][1])
+    && (places[0][0]==places[2][2]))
+    return places[0][0];
+
+if ((places[2][0]!=' ')
+&&(places[2][0]==places[1][1])
+&&(places[2][0]==places[0][2]))
+return places[2][0];
+
+if (pelna(places)==1)
+    return 1;
+return 0;
+
+} //sprawdzenie pól
+
+int uzupelnij (char places[3][3], char c)  //Funkcja uzupełniająca pole po zagraniu gracz
+{
+int i, j;
+for (i=0;i<3;i++)
+{
+    for (j=0;j<3;j++)
+    {
+        if ((places[i][j]==c) && (places[i][(j+1)%3]==c)
+            && (places[i][(j+2)]%3==' '))
+            {
+                places[i][(j+2)%3]='o';
+                return 1;
+            } // if
+        if ((places[j][i]==c)&&(places[(j+1)%3][i]==c)
+            &&(places[(j+2)%3][i]==' '))
+            {
+                places[(j+2)%3][i]='o';
+                return 1;
+            } //if
+    }// for
+        if ((places[i][2-i]==c)
+        &&(places[(i+1)%3][2-(i+1)%3]==c)
+        &&(places[(i+2)%3][2-(i+2)%3]==' ')){
+        places[(i+2)%3][2-(i+2)%3]='o';
+        return 1;
+        }//if
+        }//for
+
+    return 0;
+}
+/* 
+Do programu nalezy dołaczyc pliki nagłówkowe:
+#include <stdlib.h>
+#include <time.h>*/
+
+// Funkcja mająca za zadanie wykonać ruch ruch_komputera
+void ruch_komputera(char places[3][3])
+{
+unsigned int i, j, k;
+if (uzupelnij(places,'o'))
+return;
+if (uzupelnij(places,'x'))
+return;
+
+/*
+Okazuje sie, ze niezła strategia jest gdy komputer w pierwszej
+kolejnosci próbuje ruszac sie w naroznikach.*/
+
+    for (k=0;k<4;i++)
+    {
+        i = rand()%2;
+        j=rand()%2;
+        if (places[2*i][2*j]==' ')
+        {
+            places[2*i][2*j]='o';
+            return;
+        }
+    }
+
+    do
+    {
+        i=rand()%3;
+        j=rand()%3;
+    }
+        while(places[i][j]!=' ');
+            places[i][j]='o';
+ do{
+    i=rand()%3;
+    j=rand()%3;
+    } while (places[i][j]!=' ');
+
+places[i][j]='o';
+
+}
+
+/*
+
+Główna czesc programu bedzie stanowiła petla wykonujaca sie
+strzygnieta zmienna wynik bedzie miała
+wartosc 0.
+Stan gry bedzie oceniac funkcja sprawdz.
+Zmienna wynik bedzie miała wartosc:
+0 – gdy gra jest niezakonczona,
+1 – gdy gra zakonczyła sie remisem,
+’x’ – gdy wygrały krzyzyki,
+’o’ – gdy wygrały kółka
+
+ */
+int main(int argc, char *argv[])        //Funkcja główna
+{
+int ruch = 1;
+char wynik = 0;
+char places [3][3];
+printf("********************************************************************************\n");
+printf("-============================== KOLKO I KRZYZYK ================================\n");
+srand(time(NULL));
+wyczysc(places);
+    while (wynik==0)        //Instrukcja while
+    {
+        if (ruch==0)
+            ruch_gracza(places);
+        else
+            ruch_komputera(places);
+        ruch=1-ruch;
+        wynik=sprawdz(places);
+    }
+    wypisz(places);
+    if (wynik==1)
+        printf("Remis\n");
+    else
+        if (wynik=='x')
+        {
+            printf("Wygrales!!! :-) \n");
+            printf("Nacisnij ENTER aby kontynowac\n");
+            getchar();
+            getchar();
+        }
+    else
+    {
+        printf("Przegrales :( \n");
+        printf("Nacisnij ENTER aby kontynowac\n");
+        getchar();
+        getchar();
+    }
+ // for
+
+return 0;
+}

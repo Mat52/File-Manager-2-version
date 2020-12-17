@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+    <div id="nav">
+        <p><a href="/upload">upload</a></p>
+        <p><a href="/filemanager">filemanager</a></p>
+        <p><a href="/info">info</a></p>
+    </div>
+    <div id="text">
+        <h1>filemanager</h1>
+        </br>
+        <p><a href="/removeAll">usuń dane o plikach z tablicy</a></p>
+    </div>
+    <div id="info">
+        <table>
+            <tr>
+                <th>id</th>
+                <th>obraz</th>
+                <th>name</th>
+                <th>size</th>
+                <th>type</th>
+                <th>-</th>
+                <th>-</th>
+                <th>-</th>
+            </tr>
+            {{#each UploadTab}}
+            {{> partial}}
+            {{/each}}
+        </table>
+
+
+    </div>
+</body>
+
+</html>
